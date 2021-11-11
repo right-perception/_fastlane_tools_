@@ -1,0 +1,71 @@
+default_platform(:ios)
+
+platform :ios do
+
+  desc "Build application"
+  lane :build do
+    
+    if is_ci?
+      jenkins
+    end
+    
+    match(readonly: is_ci)
+    
+    clear_derived_data
+    xcversion(version: "~> 13.0")
+    cocoapods(try_repo_update_on_error: true)
+    gym(skip_package_dependencies_resolution: true)
+    
+    diawi_upload
+    slack_success_notify
+  end
+  
+  desc "Jenkins integration"
+  private_lane :jenkins do
+    setup_jenkins(
+      keychain_password: ENV["KEYCHAIN_PASSWORD"]
+    )
+  end
+  
+  desc "Upload to Diawi"
+  private_lane :diawi_upload do
+  	diawi(
+  		token: ENV["DIAWI_TOKEN"],
+  		file: lane_context[SharedValues::IPA_OUTPUT_PATH],
+  		find_by_udid: true,
+  		wall_of_apps: false,
+  		timeout: 30,
+  		check_status_delay: 5
+  	)
+  end
+  
+  desc "Slack notify"
+  lane :slack_success_notify do
+  	@app_name = ENV["APP_NAME"]
+  	@job_number = ENV["JENKINS_BUILD_NUMBER"]
+	@job_url = ENV["JENKINS_BUILD_URL"]
+  	slack(
+  		message: "<#@job_url|#@app_name (##@job_number)>",
+  		channel: ENV["SLACK_CHANNEL"],
+  		slack_url: ENV["SLACK_URL"],
+  		icon_url: "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/19/63/6b/19636bb4-d6d3-f8bd-4604-9f42945e8d0d/source/60x60bb.jpg",
+  		default_payloads: ["git_branch", "last_git_commit"],
+  		attachment_properties: {
+  			fields: [
+  			{
+  				title: "Собрал(а)",
+  				value: ENV["JENKINS_BUILD_USER"],
+  				short: true
+  			},
+  			{
+  				title: "Ссылка на установку",
+  				value: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
+  				short: true
+  			}
+  			]
+  		}
+  	)
+  end
+  
+end
+
