@@ -1,0 +1,4 @@
+scheme ENV["GYM_BUILD_SCHEME"]
+export_method ENV["GYM_EXPORT_METHOD"]
+
+clean(true)

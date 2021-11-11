@@ -1,0 +1,6 @@
+# Team
+apple_id ENV["USERNAME"]
+team_id ENV["TEAM_ID"]
+
+#Code Signing
+app_identifier ENV["BUNDLE_ID"]

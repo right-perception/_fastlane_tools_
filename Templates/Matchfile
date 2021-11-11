@@ -1,0 +1,13 @@
+# Git
+git_url ENV["MATCH_GIT_URL"]
+git_basic_authorization ENV["MATCH_AUTH_TOKEN"]
+
+# Signing
+type ENV["MATCH_TYPE"]
+
+# Team
+username ENV["USERNAME"]
+team_id ENV["TEAM_ID"]
+
+# App
+app_identifier ENV["BUNDLE_ID"]
