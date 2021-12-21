@@ -14,6 +14,7 @@ platform :ios do
     clear_derived_data
     xcversion(version: "~> 13.0")
     cocoapods(try_repo_update_on_error: true)
+    set_long_app_version
     gym(skip_package_dependencies_resolution: true)
     
     diawi_upload
@@ -25,6 +26,49 @@ platform :ios do
     setup_jenkins(
       keychain_password: ENV["KEYCHAIN_PASSWORD"]
     )
+  end
+  
+  desc "Set long described app version for development build"
+  lane :set_long_app_version do
+    export_method = ENV["GYM_EXPORT_METHOD"]
+	
+    if export_method.nil?
+      puts "Environment GYM_EXPORT_METHOD is missed"
+	elsif export_method == "development"
+	  if ENV["APP_VERSION_INFO_PLIST"].nil?
+        puts "Environment APP_VERSION_INFO_PLIST is missed"
+      elsif ENV["APP_TARGET"].nil?
+        puts "Environment APP_TARGET is missed"
+      else
+        set_long_described_app_version(target: ENV["APP_TARGET"], info_plist: ENV["APP_VERSION_INFO_PLIST"])
+      end
+    else 
+      puts "Export method is #{export_method}, skip!"
+    end
+  end
+
+
+  desc "Set long described app version for development build job"
+  private_lane :set_long_described_app_version do |options|
+    app_target = options[:target]
+	
+	current_app_version = get_version_number(target: app_target)
+	
+	commits_count = sh("git", "rev-list", "--remotes", "--count").strip
+	commit_hash = sh("git", "rev-parse", "--short", "HEAD").strip
+	commit_branch = sh("git", "rev-parse", "--abbrev-ref", "HEAD").strip
+	
+	puts "Current version: " + current_app_version
+	puts "Commit counts: " + commits_count
+	puts "Hash: " + commit_hash
+	puts "App: " + app_target
+	puts "Branch: " + commit_branch
+	
+	new_app_version = "#{current_app_version}.#{commits_count}.#{commit_hash}_#{app_target}_#{commit_branch}"
+	puts "New App Version: " + new_app_version
+	
+	correct_plist_path = options[:info_plist].gsub(/\s/,'\\ ')
+	sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{new_app_version}\" #{correct_plist_path}")
   end
   
   desc "Upload to Diawi"
