@@ -56,7 +56,7 @@ platform :ios do
 	
 	commits_count = sh("git", "rev-list", "--remotes", "--count").strip
 	commit_hash = sh("git", "rev-parse", "--short", "HEAD").strip
-	commit_branch = sh("git", "rev-parse", "--abbrev-ref", "HEAD").strip
+	commit_branch = sh("git", "rev-parse", "--abbrev-ref", "HEAD").strip.split('/').last
 	
 	puts "Current version: " + current_app_version
 	puts "Commit counts: " + commits_count
