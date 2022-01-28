@@ -29,6 +29,7 @@ platform :ios do
   desc "Jenkins integration"
   private_lane :jenkins do
     setup_jenkins(
+      keychain_path: ENV["KEYCHAIN_PATH"],
       keychain_password: ENV["KEYCHAIN_PASSWORD"]
     )
   end
