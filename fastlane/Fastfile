@@ -115,11 +115,6 @@ platform :ios do
   		attachment_properties: {
   			fields: [
   			{
-  				title: "Собрал(а)",
-  				value: ENV["JENKINS_BUILD_USER"],
-  				short: true
-  			},
-  			{
   				title: "Ссылка на установку",
   				value: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
   				short: true
