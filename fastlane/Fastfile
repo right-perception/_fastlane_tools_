@@ -19,7 +19,7 @@ platform :ios do
     
     clear_derived_data
     xcversion(version: "~> 13.0")
-    cocoapods(try_repo_update_on_error: true)
+    updatePodsIfNeeded
     set_long_app_version
     gym(skip_package_dependencies_resolution: true, configuration: gym_config)
     
@@ -44,6 +44,15 @@ platform :ios do
 	  reporter: "html",
 	  quiet: true
 	)
+  end
+	
+  private_lane :updatePodsIfNeeded do
+    rootPath = File.expand_path("..", Dir.pwd)
+    podFilePath = rootPath + '/Podfile'
+
+    if File.file?(podFilePath)
+      cocoapods(try_repo_update_on_error: true)
+    end 
   end
   
   desc "Set long described app version for development build"
