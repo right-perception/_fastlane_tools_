@@ -23,7 +23,10 @@ platform :ios do
     set_long_app_version
     gym(skip_package_dependencies_resolution: true, configuration: gym_config)
     
-    diawi_upload
+    unless ENV["DIAWI_TOKEN"].nil?
+    	diawi_upload
+    end
+    
     slack_success_notify
   end
   
@@ -115,6 +118,26 @@ platform :ios do
   	@app_name = ENV["APP_NAME"]
   	@job_number = ENV["JENKINS_BUILD_NUMBER"]
 	@job_url = ENV["JENKINS_BUILD_URL"]
+	@blob_manifest_url = ENV["BLOB_MANIFEST_URL"]
+	
+	@fields = Array.new
+	
+	unless lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI].nil?
+		@fields.push(
+			title: "Ссылка на Diawi",
+  			value: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
+  			short: true
+		)
+	end
+	
+	unless @blob_manifest_url.nil?
+		@fields.push(
+			title: "Ссылка на Azure",
+  			value: @blob_manifest_url,
+  			short: true
+		)
+	end
+	
   	slack(
   		message: "<#@job_url|#@app_name (##@job_number)>",
   		channel: ENV["SLACK_CHANNEL"],
@@ -122,13 +145,7 @@ platform :ios do
   		icon_url: "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/19/63/6b/19636bb4-d6d3-f8bd-4604-9f42945e8d0d/source/60x60bb.jpg",
   		default_payloads: ["git_branch", "last_git_commit"],
   		attachment_properties: {
-  			fields: [
-  			{
-  				title: "Ссылка на установку",
-  				value: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
-  				short: true
-  			}
-  			]
+  			fields: @fields 
   		}
   	)
   end  
