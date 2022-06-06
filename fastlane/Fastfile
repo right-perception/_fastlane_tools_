@@ -118,7 +118,7 @@ platform :ios do
   	@app_name = ENV["APP_NAME"]
   	@job_number = ENV["JENKINS_BUILD_NUMBER"]
 	@job_url = ENV["JENKINS_BUILD_URL"]
-	@blob_manifest_url = ENV["BLOB_MANIFEST_URL"]
+	@blob_url = ENV["BLOB_URL"]
 	
 	@fields = Array.new
 	
@@ -130,11 +130,11 @@ platform :ios do
 		)
 	end
 	
-	unless @blob_manifest_url.nil?
+	unless @blob_url.nil?
 		@fields.push(
 			title: "Ссылка на Azure",
-  			value: @blob_manifest_url,
-  			short: true
+  			value: @blob_url,
+  			short: false
 		)
 	end
 	
