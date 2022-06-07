@@ -27,6 +27,7 @@ platform :ios do
     	diawi_upload
     end
     
+    telegram_success_notify
     slack_success_notify
   end
   
@@ -111,6 +112,17 @@ platform :ios do
   		timeout: 30,
   		check_status_delay: 5
   	)
+  end
+	
+  desc "Telegram notify"
+  lane :telegram_success_notify do
+	unless ENV['TG_BOT_TOKEN'].nil? and ENV['TG_CHAT_ID'].nil?
+		telegram(
+			token: ENV['TG_BOT_TOKEN'],
+			chat_id: ENV['TG_CHAT_ID'],
+			text: ENV['TG_CHAT_TEXT']
+		)
+	end
   end
   
   desc "Slack notify"
