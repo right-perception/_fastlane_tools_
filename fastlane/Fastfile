@@ -122,6 +122,7 @@ platform :ios do
 		telegram(
 			token: ENV['TG_BOT_TOKEN'],
 			chat_id: ENV['TG_CHAT_ID'],
+			parse_mode: "HTML",
 			text: ENV['TG_CHAT_TEXT']
 		)
 	end
