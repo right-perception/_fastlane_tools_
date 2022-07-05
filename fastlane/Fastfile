@@ -159,6 +159,7 @@ platform :ios do
   		slack_url: ENV["SLACK_URL"],
   		icon_url: "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/19/63/6b/19636bb4-d6d3-f8bd-4604-9f42945e8d0d/source/60x60bb.jpg",
   		default_payloads: ["git_branch", "last_git_commit"],
+		fail_on_error: false,
   		attachment_properties: {
   			fields: @fields 
   		}
