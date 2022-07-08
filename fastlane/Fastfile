@@ -28,7 +28,6 @@ platform :ios do
     end
     
     telegram_success_notify
-    slack_success_notify
   end
   
   desc "Jenkins integration"
