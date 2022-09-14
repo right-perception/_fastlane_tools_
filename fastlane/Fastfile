@@ -13,7 +13,7 @@ platform :ios do
     match(readonly: is_ci)
     
     clear_derived_data
-    xcversion(version: "~> 13.0")
+    xcversion(version: "~> 14.0")
     updatePodsIfNeeded
     set_long_app_version
     gym(skip_package_dependencies_resolution: false, configuration: gym_config)
@@ -62,8 +62,14 @@ platform :ios do
 	
 	commits_count = sh("git", "rev-list", "--remotes", "--count").strip
 	commit_hash = sh("git", "rev-parse", "--short", "HEAD").strip
-	commit_branch = sh("git", "rev-parse", "--abbrev-ref", "HEAD").strip.split('/').last
 	
+	isGitlabCI = ENV["GITLAB_CI"]
+    	if isGitlabCI.nil?
+	  commit_branch = sh("git", "rev-parse", "--abbrev-ref", "HEAD").strip.split('/').last
+	else
+	  commit_branch = ENV["CI_COMMIT_REF_NAME"]
+    	end
+
 	puts "Current version: " + current_app_version
 	puts "Commit counts: " + commits_count
 	puts "Hash: " + commit_hash
