@@ -105,43 +105,5 @@ platform :ios do
 			text: ENV['TG_CHAT_TEXT']
 		)
 	end
-  end
-  
-  desc "Slack notify"
-  lane :slack_success_notify do
-  	@app_name = ENV["APP_NAME"]
-  	@job_number = ENV["JENKINS_BUILD_NUMBER"]
-	@job_url = ENV["JENKINS_BUILD_URL"]
-	@blob_url = ENV["BLOB_URL"]
-	
-	@fields = Array.new
-	
-	unless lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI].nil?
-		@fields.push(
-			title: "Ссылка на Diawi",
-  			value: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
-  			short: true
-		)
-	end
-	
-	unless @blob_url.nil?
-		@fields.push(
-			title: "Ссылка на Azure",
-  			value: @blob_url,
-  			short: false
-		)
-	end
-	
-  	slack(
-  		message: "<#@job_url|#@app_name (##@job_number)>",
-  		channel: ENV["SLACK_CHANNEL"],
-  		slack_url: ENV["SLACK_URL"],
-  		icon_url: "https://is3-ssl.mzstatic.com/image/thumb/Purple113/v4/19/63/6b/19636bb4-d6d3-f8bd-4604-9f42945e8d0d/source/60x60bb.jpg",
-  		default_payloads: ["git_branch", "last_git_commit"],
-		fail_on_error: false,
-  		attachment_properties: {
-  			fields: @fields 
-  		}
-  	)
   end  
 end
