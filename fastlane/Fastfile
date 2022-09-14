@@ -17,11 +17,7 @@ platform :ios do
     updatePodsIfNeeded
     set_long_app_version
     gym(skip_package_dependencies_resolution: false, configuration: gym_config)
-    
-    unless ENV["DIAWI_TOKEN"].nil?
-    	diawi_upload
-    end
-    
+	  
     telegram_success_notify
   end
 	
@@ -81,18 +77,6 @@ platform :ios do
 	
 	correct_plist_path = options[:info_plist].gsub(/\s/,'\\ ')
 	sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{new_app_version}\" #{correct_plist_path}")
-  end
-  
-  desc "Upload to Diawi"
-  private_lane :diawi_upload do
-  	diawi(
-  		token: ENV["DIAWI_TOKEN"],
-  		file: lane_context[SharedValues::IPA_OUTPUT_PATH],
-  		find_by_udid: true,
-  		wall_of_apps: false,
-  		timeout: 30,
-  		check_status_delay: 5
-  	)
   end
 	
   desc "Telegram notify"
