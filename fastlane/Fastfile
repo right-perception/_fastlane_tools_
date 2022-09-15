@@ -16,7 +16,7 @@ platform :ios do
     xcversion(version: "~> 14.0")
     updatePodsIfNeeded
     set_long_app_version
-    gym(skip_package_dependencies_resolution: false, configuration: gym_config)
+    gym(configuration: gym_config)
 	  
     telegram_success_notify
   end
