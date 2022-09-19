@@ -21,6 +21,12 @@ platform :ios do
     telegram_success_notify
   end
 	
+  desc "Get TestFlight version"
+  lane :get_tf_version do
+    app_store_build_number(live: false)
+)
+  end
+	
   private_lane :updatePodsIfNeeded do
     rootPath = File.expand_path("..", Dir.pwd)
     podFilePath = rootPath + '/Podfile'
