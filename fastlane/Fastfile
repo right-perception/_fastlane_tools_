@@ -24,8 +24,8 @@ platform :ios do
   desc "Get TestFlight version"
   lane :get_tf_version do
     app_store_build_number(live: false)
-    ENV["APP_BUILD_NUMBER"] = lane_context[SharedValues::LATEST_BUILD_NUMBER]
-    ENV["APP_BUILD_VERSION"] = lane_context[SharedValues::LATEST_VERSION]
+    ENV["APP_BUILD_NUMBER"] = lane_context[SharedValues::LATEST_BUILD_NUMBER].to_s
+    ENV["APP_BUILD_VERSION"] = lane_context[SharedValues::LATEST_VERSION].to_s
   end
 	
   private_lane :updatePodsIfNeeded do
