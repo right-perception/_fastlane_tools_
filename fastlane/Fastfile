@@ -13,7 +13,7 @@ platform :ios do
     match(readonly: is_ci)
     
     clear_derived_data
-    xcversion(version: "~> 14.0")
+    xcversion(version: "~> 13.0")
     updatePodsIfNeeded
     set_long_app_version
     gym(configuration: gym_config)
