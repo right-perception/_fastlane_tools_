@@ -1,4 +1,4 @@
-default_platform(:ios)
+default_platform :ios
 
 platform :ios do
 
@@ -9,19 +9,18 @@ platform :ios do
     if gym_config.nil?
     	gym_config = "Release"
     end
-    
-    match(readonly: is_ci)
-    
+	
+	xcversion(version: "~> 13.0")    
+    match(readonly: is_ci)    
     clear_derived_data
-    xcversion(version: "~> 13.0")
-    updatePodsIfNeeded
-    set_long_app_version
+    update_cocoapods_if_needed
+    set_long_app_version_if_needed
     gym(configuration: gym_config)
 	  
     telegram_success_notify
   end
 	
-  private_lane :updatePodsIfNeeded do
+  private_lane :update_cocoapods_if_needed do
     rootPath = File.expand_path("..", Dir.pwd)
     podFilePath = rootPath + '/Podfile'
 
@@ -31,7 +30,7 @@ platform :ios do
   end
   
   desc "Set long described app version for development build"
-  lane :set_long_app_version do
+  lane :set_long_app_version_if_needed do
     export_method = ENV["GYM_EXPORT_METHOD"]
 	
     if export_method.nil?
@@ -89,5 +88,34 @@ platform :ios do
 			text: ENV['TG_CHAT_TEXT']
 		)
 	end
+  end
+  
+  desc "Download dSYM files from iTC and upload to Crashlytics. (Apple generates new dSYM when a build is uploaded with bitcode enabled)."
+  lane :refresh_dsyms do
+    download_dsyms(min_version: "1.0")                           # Download dSYM files from AppStore Connect
+    upload_symbols_to_crashlytics(app_id: ENV["GOOGLE_APP_ID"])   # Upload them to Firebase Crashlytics
+    clean_build_artifacts                                        # Delete the local dSYM files
   end  
+  
+  desc "Get certificates, pass 'dist:true' for distribution, create:true' for creation, 'force:true' to force"
+  lane :certificates do |options|
+    match(
+      type: options[:dist] ? ENV["MATCH_TYPE"] : "development",
+      readonly: options[:create] ? false : true,
+      force: options[:force] ? true : false,
+      force_for_new_devices: options[:create] ? true : false
+    )
+  end
+  
+  desc "Register new device"
+  lane :register_new_device do  |options|
+      device_name = prompt(text: "Enter the device name: ")
+      device_udid = prompt(text: "Enter the device UDID: ")
+      device_hash = {}
+      device_hash[device_name] = device_udid
+      register_devices(devices: device_hash)
+      certificates(
+        create:true
+      )
+  end
 end
