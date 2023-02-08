@@ -10,7 +10,8 @@ platform :ios do
     	gym_config = "Release"
     end
 
-    xcodes(version: "14.2")
+#     xcodes(version: "14.2")
+    xcversion(version: "~> 14.0")
     match(readonly: is_ci)
     clear_derived_data
     update_cocoapods_if_needed
