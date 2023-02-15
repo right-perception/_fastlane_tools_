@@ -107,6 +107,11 @@ platform :ios do
       force_for_new_devices: options[:create] ? true : false
     )
   end
+	
+  desc "Add stage badge to icon"
+  lane :add_stage_badge_to_icon do
+      add_badge(custom: "fastlane/badge/stage.png")  
+  end
   
   desc "Register new device"
   lane :register_new_device do  |options|
