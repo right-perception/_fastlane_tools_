@@ -81,7 +81,7 @@ platform :ios do
 	
   desc "Telegram notify"
   lane :telegram_success_notify do
-		unless ENV['TG_BOT_TOKEN'].nil? and ENV['TG_CHAT_ID'].nil?
+		unless ENV['TG_BOT_TOKEN'].nil? || ENV['TG_CHAT_ID'].nil?
 			telegram(
 				token: ENV['TG_BOT_TOKEN'],
 				chat_id: ENV['TG_CHAT_ID'],
