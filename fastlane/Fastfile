@@ -10,12 +10,12 @@ platform :ios do
     	gym_config = "Release"
     end
 
-#     xcodes(version: "14.2")
-    xcversion(version: "~> 14.0")
+    # xcodes(version: "14.2")
+    xcversion(version: "~> 26.0")
     match(readonly: is_ci)
     clear_derived_data
     update_cocoapods_if_needed
-    set_long_app_version_if_needed
+    # set_long_app_version_if_needed
     gym(configuration: gym_config)
 	  
     telegram_success_notify
